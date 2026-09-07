@@ -1,10 +1,13 @@
 // Generates N spec files with 3 tests each. Playwright shards by file,
 // so a suite with more files than shards is needed for even splits.
+// Usage: node scripts/generate-tests.js [files] [dir]
+//   node scripts/generate-tests.js 48                 -> tests/ (144 tests)
+//   node scripts/generate-tests.js 480 tests-large    -> tests-large/ (1,440 tests)
 const fs = require('fs');
 const path = require('path');
 
 const files = Number(process.argv[2] || 48);
-const dir = path.join(__dirname, '..', 'tests');
+const dir = path.join(__dirname, '..', process.argv[3] || 'tests');
 fs.mkdirSync(dir, { recursive: true });
 
 for (let i = 1; i <= files; i++) {

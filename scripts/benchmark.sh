@@ -6,21 +6,24 @@
 #
 # Usage: scripts/benchmark.sh [shard counts...]   (default: 1 8 32)
 #   RUNS=3 scripts/benchmark.sh 1 8 32
+#   SUITE=tests-large scripts/benchmark.sh 1 4 8 32   (the 1,440-test suite)
 set -uo pipefail
 
 WORKFLOW=${WORKFLOW:-playwright-sharded}
 RUNS=${RUNS:-2}
 NS=${NS:-testkube}
+SUITE=${SUITE:-tests}
 COUNTS=("$@")
 [ ${#COUNTS[@]} -eq 0 ] && COUNTS=(1 8 32)
 
+echo "suite=$SUITE"
 printf "%-7s %-4s %-10s %-8s %-9s %-4s %s\n" shards run wallclock pods unsched oom status
 
 for n in "${COUNTS[@]}"; do
   for r in $(seq 1 "$RUNS"); do
     kubectl delete events -n "$NS" --all >/dev/null 2>&1
     start=$(date +%s)
-    if testkube run testworkflow "$WORKFLOW" --config shards="$n" --watch >"/tmp/bench-$n-$r.log" 2>&1; then
+    if testkube run testworkflow "$WORKFLOW" --config shards="$n" --config suite="$SUITE" --watch >"/tmp/bench-$n-$r.log" 2>&1; then
       status=passed
     else
       status=failed

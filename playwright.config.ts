@@ -5,8 +5,11 @@ import { defineConfig } from '@playwright/test';
 // what limits how many shards fit on a node.
 const workers = Number(process.env.WORKERS || 2);
 
+// TEST_DIR picks the suite: tests/ (144 tests) or tests-large/ (1,440 tests).
+const testDir = process.env.TEST_DIR || './tests';
+
 export default defineConfig({
-  testDir: './tests',
+  testDir,
   fullyParallel: true,
   workers,
   retries: 0,

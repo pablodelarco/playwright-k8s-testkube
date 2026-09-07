@@ -7,7 +7,7 @@ metadata:
     app: playwright-k8s-testkube
 spec:
   # Everything you tune from the CLI lives here:
-  #   testkube run testworkflow playwright-sharded --config shards=8 --config workers=2
+  #   testkube run testworkflow playwright-sharded --config shards=8 --config workers=2 --config suite=tests-large
   # parallelism (max pods at once) has to be a literal integer in the CRD,
   # so it is set below on the parallel step instead of here.
   config:
@@ -19,6 +19,10 @@ spec:
       type: integer
       default: 2
       description: Playwright workers (browser contexts) inside each pod
+    suite:
+      type: string
+      default: tests
+      description: test directory to run, tests (144 tests) or tests-large (1,440 tests)
 
   content:
     git:
@@ -54,6 +58,8 @@ spec:
               value: "1"
             - name: WORKERS
               value: "{{ config.workers }}"
+            - name: TEST_DIR
+              value: "{{ config.suite }}"
           resources:
             requests:
               cpu: 250m

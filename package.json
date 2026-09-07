@@ -6,6 +6,7 @@
   "scripts": {
     "test": "playwright test",
     "generate": "node scripts/generate-tests.js 48",
+    "generate:large": "node scripts/generate-tests.js 480 tests-large",
     "merge": "playwright merge-reports --reporter=html reports"
   },
   "keywords": [],

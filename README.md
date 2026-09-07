@@ -73,5 +73,5 @@ Prints shards, run number, wall-clock seconds, pods created, `FailedScheduling` 
 ## Versions used
 
 - Playwright 1.63.0, image `mcr.microsoft.com/playwright:v1.63.0-noble`
-- Node 22
+- Node 24 (v24.20.0 inside the `v1.63.0-noble` image)
 - Testkube Test Workflows API `testworkflows.testkube.io/v1`

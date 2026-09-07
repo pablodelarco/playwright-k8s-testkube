@@ -39,7 +39,7 @@ spec:
         # Hard cap on pods running at once. Set it to what your nodes can
         # hold: sum of allocatable memory / the per-pod request below.
         # Extra shards queue instead of sitting in Pending.
-        parallelism: 16
+        parallelism: 5
         # Copy the checked-out repo (with node_modules) into every worker pod.
         transfer:
           - from: /data/repo
@@ -56,7 +56,7 @@ spec:
               value: "{{ config.workers }}"
           resources:
             requests:
-              cpu: 1
+              cpu: 250m
               memory: 1536Mi
             limits:
               memory: 2Gi

@@ -1,0 +1,18 @@
+{
+  "name": "playwright-k8s-testkube",
+  "version": "1.0.0",
+  "description": "Sharded Playwright suite run as parallel pods on Kubernetes with Testkube",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "generate": "node scripts/generate-tests.js 48",
+    "merge": "playwright merge-reports --reporter=html reports"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
+  },
+  "private": true
+}

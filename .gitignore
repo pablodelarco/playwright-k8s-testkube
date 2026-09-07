@@ -1,0 +1,14 @@
+node_modules/
+blob-report/
+playwright-report/
+reports/
+test-results/
+MASTER-PLAN-*.md
+*DRAFT*.md
+FINAL-*.md
+BENCHMARK-RAW.md
+CHECKLIST.md
+NOTE-TO-JAKUB.md
+images/
+tasks/
+.DS_Store

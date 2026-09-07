@@ -1,0 +1,71 @@
+apiVersion: testworkflows.testkube.io/v1
+kind: TestWorkflow
+metadata:
+  name: playwright-sharded
+  namespace: testkube
+  labels:
+    app: playwright-k8s-testkube
+spec:
+  # Everything you tune from the CLI lives here:
+  #   testkube run testworkflow playwright-sharded --config shards=8 --config workers=2
+  # parallelism (max pods at once) has to be a literal integer in the CRD,
+  # so it is set below on the parallel step instead of here.
+  config:
+    shards:
+      type: integer
+      default: 8
+      description: how many Playwright shards (pods) to split the suite into
+    workers:
+      type: integer
+      default: 2
+      description: Playwright workers (browser contexts) inside each pod
+
+  content:
+    git:
+      uri: https://github.com/pablodelarco/playwright-k8s-testkube
+      revision: main
+
+  container:
+    image: mcr.microsoft.com/playwright:v1.63.0-noble
+    workingDir: /data/repo
+
+  steps:
+    - name: Install dependencies
+      shell: npm ci
+
+    - name: Run shards
+      parallel:
+        count: "config.shards"
+        # Hard cap on pods running at once. Set it to what your nodes can
+        # hold: sum of allocatable memory / the per-pod request below.
+        # Extra shards queue instead of sitting in Pending.
+        parallelism: 16
+        # Copy the checked-out repo (with node_modules) into every worker pod.
+        transfer:
+          - from: /data/repo
+        # Pull each shard's blob report back into the main execution pod.
+        # Playwright names them report-<shard>.zip, so they never collide.
+        fetch:
+          - from: /data/repo/blob-report
+            to: /data/reports
+        container:
+          env:
+            - name: CI
+              value: "1"
+            - name: WORKERS
+              value: "{{ config.workers }}"
+          resources:
+            requests:
+              cpu: 1
+              memory: 1536Mi
+            limits:
+              memory: 2Gi
+        shell: |
+          npx playwright test --shard {{ index + 1 }}/{{ count }}
+
+    - name: Merge reports
+      condition: always
+      shell: npx playwright merge-reports --reporter=html /data/reports
+      artifacts:
+        paths:
+          - playwright-report/**

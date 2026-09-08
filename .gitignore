@@ -12,3 +12,4 @@ NOTE-TO-JAKUB.md
 images/
 tasks/
 .DS_Store
+*.code-workspace
